@@ -145,4 +145,7 @@ module Watir
     TAG = 'EM'
   end
 
+  class Fieldset < NonControlElement
+    TAG = 'FIELDSET'
+  end
 end
