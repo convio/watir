@@ -39,7 +39,21 @@ module Watir
         call(hwnd, pid_info)
         process_id =  pid_info.unpack("L")[0]
       end
-      
+
+      def self.version
+        @@ie_version ||= begin
+          require 'win32/registry'
+          ::Win32::Registry::HKEY_LOCAL_MACHINE.open("SOFTWARE\\Microsoft\\Internet Explorer") do |ie_key|
+            ie_key.read('Version').last
+          end
+          # OR: ::WIN32OLE.new("WScript.Shell").RegRead("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Internet Explorer\\Version")
+        end
+      end
+
+      def self.version_parts
+        @@ie_version_parts ||= IE.version.split('.')
+      end
+
     end
   end
 end
