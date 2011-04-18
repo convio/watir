@@ -355,7 +355,7 @@ module Watir
   class TableCell < Element
     include Watir::Exception
     include Container
-    
+
     def locate
       if @how == :xpath
         @o = @container.element_by_xpath(@what)
@@ -364,7 +364,7 @@ module Watir
       elsif @how == :ole_object
         @o = @what
       else
-        @o = @container.locate_tagged_element("TD", @how, @what)
+        @o = @container.locate_tagged_element("TD", @how, @what) || @container.locate_tagged_element("TH", @how, @what)
       end
     end
     
