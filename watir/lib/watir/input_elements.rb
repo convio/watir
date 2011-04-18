@@ -494,47 +494,42 @@ module Watir
     
   end
   
+
   # For fields that accept file uploads
-  # Windows dialog is opened and handled in this case by autoit 
+  # Windows dialog is opened and handled in this case by autoit
   # launching into a new process.
-  # Normally a user would not need to create this object as it is returned by the Watir::Container#file_field method
   class FileField < InputElement
-    #:stopdoc:
     INPUT_TYPES = ["file"]
     POPUP_TITLES = ['Choose file', 'Choose File to Upload']
-    #:startdoc:
-    
-    # set the file location in the Choose file dialog in a new process
-    # will raise a WatirException if AutoIt is not correctly installed
+
+    # Opens the file dialog and sets the file location
     def set(path_to_file)
       assert_exists
-      require 'watir/windowhelper'
-      WindowHelper.check_autoit_installed
-      begin
-        Thread.new do
-          sleep 1 # it takes some time for popup to appear
+      click_no_wait
+      file_dialog_select path_to_file
+    end
 
-          system %{ruby -e '
-              require "win32ole"
+    private
 
-              @autoit = WIN32OLE.new("AutoItX3.Control")
-              time    = Time.now
-
-              while (Time.now - time) < 15 # the loop will wait up to 15 seconds for popup to appear
-                #{POPUP_TITLES.inspect}.each do |popup_title|
-                  next unless @autoit.WinWait(popup_title, "", 1) == 1
-
-                  @autoit.ControlSetText(popup_title, "", "Edit1", #{path_to_file.inspect})
-                  @autoit.ControlSend(popup_title, "", "Button2", "{ENTER}")
-                  exit
-                end # each
-              end # while
-          '}
-        end.join(1)
-      rescue
-        raise Watir::Exception::WatirException, "Problem accessing Choose file dialog"
+    # Selects the specified path_to_file in the currently active file selector dialog.
+    def file_dialog_select path_to_file
+      require 'timeout'
+      autoit = Watir.autoit
+      Timeout::timeout(30) do
+        while true
+          POPUP_TITLES.each do |popup_title|
+            next unless 1 == autoit.WinWait(popup_title, "", 1)
+            raise unless 1 == autoit.ControlSetText(popup_title, "", "Edit1", path_to_file)
+            raise unless 1 == autoit.ControlSend(popup_title, "", "Button2", "{ENTER}")
+            # Retry if that didn't work
+            if 0 == autoit.WinWaitClose(popup_title, "", 1)
+              raise unless 1 == autoit.ControlSetText(popup_title, "", "Edit1", path_to_file)
+              raise unless 1 == autoit.ControlSend(popup_title, "", "Button2", "{ENTER}")
+            end
+            return
+          end # each
+        end # while
       end
-      click
     end
 
     def value=(x)
