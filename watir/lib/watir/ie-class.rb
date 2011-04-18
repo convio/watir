@@ -470,6 +470,10 @@ module Watir
       return @ie.LocationURL
     end
 
+    def window
+      document.parentWindow
+    end
+
     #
     # Synchronization
     #
