@@ -44,6 +44,10 @@ module Watir
     def attach_command
       @container.page_container.attach_command + ".frame(#{@how.inspect}, #{@what.inspect})".gsub('"','\'')
     end
+
+    def src
+      attribute_value('src')
+    end
     
   end
 end
