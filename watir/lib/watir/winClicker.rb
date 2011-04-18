@@ -166,7 +166,7 @@ class WinClicker
   # Enumerates open windows and
   # returns a window handle from a given title and window class
   # Window class and title are matched regexes
-  def getWindowHandle(title, winclass = "" )
+  def getWindowHandle(title, winclass = "", strict_title_match=false)
     enum_windows = @User32['EnumWindows', 'IPL']
     get_class_name = @User32['GetClassName', 'ILpI']
     get_caption_length = @User32['GetWindowTextLengthA' ,'LI' ]    # format here - return value type (Long) followed by parameter types - int in this case -      see http://www.ruby-lang.org/cgi-bin/cvsweb.cgi/~checkout~/ruby/ext/dl/doc/dl.txt?
@@ -194,8 +194,9 @@ class WinClicker
       if classMatch ==true
         textLength, a = get_caption_length.call(hwnd)
         captionBuffer = " " * (textLength+1)
-        t ,  textCaption  = get_caption.call(hwnd, captionBuffer  , textLength+1)    
-        if /#{title}/ =~ textCaption[1].to_s
+        t ,  textCaption  = get_caption.call(hwnd, captionBuffer  , textLength+1)
+        if (strict_title_match && title == textCaption[1].to_s) ||
+           (!strict_title_match && /#{title}/ =~ textCaption[1].to_s)
           found_hwnd = hwnd
           bContinueEnum = 0 # False, discontinue enum_windows
         end
@@ -211,7 +212,13 @@ class WinClicker
   end
   alias :get_window_handle :getWindowHandle 
 
-  # Call SwitchToThisWindow win32api which will 
+
+  # Change window match so it's an exact title (otherwise we'll set focus to every window when checking for session expiration
+  def getWindowHandle_byexacttitle(title, winclass = "")
+    getWindowHandle(title, winclass, true)
+  end
+
+  # Call SwitchToThisWindow win32api which will
   # The SwitchToThisWindow function is called to switch focus to a specified window
   # and bring it to the foreground
   def makeWindowActive (hWnd)
@@ -456,5 +463,5 @@ class WinClicker
       return true
     end
   end
-  alias :set_file_name :setTextValueForFileNameField 
-end 
+  alias :set_file_name :setTextValueForFileNameField
+end
