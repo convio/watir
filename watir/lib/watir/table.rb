@@ -336,6 +336,32 @@ module Watir
       y
     end
 
+    # Return the cell in the row based on the column
+    # name, the value from the first row of the table
+    def column(name)
+      # Create a list of column names from the first row of the table.
+      # If we see any colspans, duplicate the name for each column spanned
+      # If the column name given has a colspan we won't know which row cell
+      # in the span so we'll return the first one. You can work around this just
+      # getting the row cell by position.
+      column_names = []
+      table_node = parent
+      while table_node.ole_object.nodeName != 'TABLE'
+        table_node = table_node.parent
+      end
+      first_table_row = table(:ole_object, table_node.ole_object)[1]
+      first_table_row.each { |cell| cell.colspan.times {column_names << cell.text} }
+      requested_column_index = column_names.matches(name)
+      raise UnknownCellException, "Unable to locate a table cell using row and column #{name}" unless requested_column_index
+
+      # Break down the row so there are no colspans. This should provide a
+      # 1-1 mapping between the column names and row cells.
+      row_cells_without_colspans = []
+      cell_index = 1
+      each { |cell| cell.colspan.times {row_cells_without_colspans << cell_index}; cell_index +=1 }
+      self[row_cells_without_colspans[requested_column_index]]
+    end
+
     private
     # Returns true if inner_table is direct child
     # table for cell and there's not any table-s in between

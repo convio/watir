@@ -98,6 +98,13 @@ module Watir
     # Return the outer html of the object - see http://msdn.microsoft.com/workshop/author/dhtml/reference/properties/outerhtml.asp?frame=true
     def_wrap :html, :outerHTML
 
+    def_wrap_guard :has_cell
+
+    def has_cell x
+      self.cell(:text, x).exists?
+    end
+
+
     # return the text before the element
     def before_text # label only
       assert_exists

@@ -25,6 +25,14 @@ module Watir
     def match_with_specifiers?(element)
       @specifiers.each do |how, what|
         next if how == :index
+
+        # Look for text in a table cell but continue on
+        # if there is a match in an embedded table in that cell
+        if how == :has_cell && (match? element, how, what) && element.tables
+          element.tables.each {|table| return false if table.cell(:text, what).exists? }
+          next
+        end
+
         return false unless match? element, how, what
       end
       return true
