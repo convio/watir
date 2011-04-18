@@ -10,6 +10,15 @@ module Watir
       @what = what
       super(nil)
     end
+
+    def value=(x)
+      case x
+        when Regexp
+        set(x)
+      else
+        set(x.to_s)
+      end
+    end
   end
 
   #
@@ -40,14 +49,18 @@ module Watir
       highlight(:clear)
     end
 
-    
     # This method selects an item, or items in a select box, by text.
     # Raises NoValueFoundException   if the specified value is not found.
     #  * item   - the thing to select, string or reg exp
     def select(item)
-      select_item_in_select_list(:text, item)
+      case item
+        when Array
+        item.each { |i| select_item_in_select_list(:text, i) }
+      else
+        select_item_in_select_list(:text, item)
+      end
     end
-    alias :set :select 
+    alias :set :select
        
     # Selects an item, or items in a select box, by value.
     # Raises NoValueFoundException   if the specified value is not found.
@@ -88,7 +101,7 @@ module Watir
       end
       highlight(:clear)
     end
-    
+
     # Returns array of all text items displayed in a select box
     # An empty array is returned if the select box has no contents.
     # Raises UnknownObjectException if the select box is not found
@@ -223,6 +236,10 @@ module Watir
     #:stopdoc:
     INPUT_TYPES = ["button", "submit", "image", "reset"]
     #:startdoc:
+
+    def value=(x)
+      click if x
+    end
   end
 
   #
@@ -519,8 +536,16 @@ module Watir
       end
       click
     end
+
+    def value=(x)
+      @container.wait
+      filename = File.expand_path(x)
+      filename.gsub!("\/","\\")
+      filename.gsub!("\\","\\\\")
+      set(filename)
+    end
   end
-  
+
   # This class contains common methods to both radio buttons and check boxes.
   # Normally a user would not need to create this object as it is returned by the Watir::Container#checkbox or by Watir::Container#radio methods
   #--
@@ -554,7 +579,11 @@ module Watir
       @container.wait
     end
     private :set_clear_item
-    
+
+    def radio_value=(x)
+      @value = x
+    end
+
   end
   
   #--
@@ -587,6 +616,39 @@ module Watir
       set_clear_item(true)
       highlight(:clear)
     end
+
+    # Sets (click) the button corresponding to the specified value.
+    def value=(x)
+      copy = self.dup
+      copy.radio_value = x
+      copy.set
+    end
+
+    # Is there a button matching the current specifiers for the provided value?
+    def valueIsSet?(x)
+      copy = self.dup
+      copy.radio_value = x
+      copy.exists? && copy.isSet?
+    end
+
+    # Returns the value that the current button-group is set for.
+    def selected_value
+      copy = checked_button
+      copy.value
+    end
+
+    # Returns the button matching the current specifiers that is actually checked
+    def checked_button
+      copy = self.dup
+      if copy.how.is_a? Symbol
+        copy.how = {copy.how => copy.what}
+        copy.what = nil
+      end
+      copy.how.merge!(:checked => true)
+      copy
+    end
+    private :checked_button
+
     
   end
   
@@ -615,7 +677,11 @@ module Watir
     def clear
       set false
     end
-        
+
+    def value=(x)
+      x ? set : clear
+    end
+
   end
   
 end
