@@ -7,7 +7,7 @@ projects = ['watir', 'firewatir', 'commonwatir']
 def launch_subrake(cmd)
   command = "#{Gem.ruby} -S rake #{cmd}"
   sh (command) do |ok, status|
-    ok or fail "Command filed with status (#{status.exitstatus}): [#{command}]"
+    ok or (puts "Command filed with status (#{status.exitstatus}): [#{command}]" && exit 1)
   end
 end
 
