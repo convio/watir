@@ -1,0 +1,6 @@
+#(select)_no_wait changed to set_no_wait
+
+* Need to look at convio branch of existing watir 1.7.0.11 and see
+  - frame.src
+
+

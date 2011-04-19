@@ -62,7 +62,7 @@ task :test_firewatir do
   end
 end
 
-task :deploy do #=> [:clean, :test_watir, :gems] do
+task :deploy => [:clean, :test_watir, :gems] do
   Dir.chdir("gems") do
     watir_gem = Dir['watir*.gem'].first
     sh "gem install --local -i c:/gemserver/ruby/gems --no-ri #{watir_gem}"
