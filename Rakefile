@@ -5,7 +5,10 @@ require 'fileutils'
 projects = ['watir', 'firewatir', 'commonwatir']
 
 def launch_subrake(cmd)
-  system("#{Gem.ruby} -S rake #{cmd}")
+  command = "#{Gem.ruby} -S rake #{cmd}"
+  sh (command) do |ok, status|
+    ok or fail "Command filed with status (#{status.exitstatus}): [#{command}]"
+  end
 end
 
 task :default => :gems
@@ -58,6 +61,14 @@ task :test_firewatir do
     launch_subrake "test"
   end
 end
+
+task :deploy do #=> [:clean, :test_watir, :gems] do
+  Dir.chdir("gems") do
+    watir_gem = Dir['watir*.gem'].first
+    sh "gem install --local -i c:/gemserver/ruby/gems --no-ri #{watir_gem}"
+  end
+end
+
 
 #
 # ------------------------------ watirspec -----------------------------------
