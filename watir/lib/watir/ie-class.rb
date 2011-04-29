@@ -50,7 +50,7 @@ module Watir
 		end
 
     # Used internally to determine when IE has finished loading a page
-    READYSTATES = {:complete => 4}
+    READYSTATES = {:complete => 4, :interactive => 3}
 
     # The default color for highlighting objects as they are accessed.
     HIGHLIGHT_COLOR = 'yellow'
@@ -161,6 +161,21 @@ module Watir
       ie
     end
 
+    def self.version
+      begin
+        require 'win32/registry'
+        ::Win32::Registry::HKEY_LOCAL_MACHINE.open("SOFTWARE\\Microsoft\\Internet Explorer") do |ie_key|
+          ie_key.read('Version').last
+        end
+        # OR: ::WIN32OLE.new("WScript.Shell").RegRead("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Internet Explorer\\Version")
+      end
+    end
+
+    def self.version_parts
+      version.split('.')
+    end
+
+
     def create_browser_window
       @ie = WIN32OLE.new('InternetExplorer.Application')
     end
@@ -179,6 +194,7 @@ module Watir
       @logger = DefaultLogger.new
       @url_list = []
     end
+
 
     # Specifies the speed that commands will be executed at. Choices are:
     # * :slow (default)
