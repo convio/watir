@@ -493,53 +493,6 @@ module Watir
     end
     
   end
-  
-
-  # For fields that accept file uploads
-  # Windows dialog is opened and handled in this case by autoit
-  # launching into a new process.
-  class FileField < InputElement
-    INPUT_TYPES = ["file"]
-    POPUP_TITLES = ['Choose file', 'Choose File to Upload']
-
-    # Opens the file dialog and sets the file location
-    def set(path_to_file)
-      assert_exists
-      click_no_wait
-      file_dialog_select path_to_file
-    end
-
-    private
-
-    # Selects the specified path_to_file in the currently active file selector dialog.
-    def file_dialog_select path_to_file
-      require 'timeout'
-      autoit = Watir.autoit
-      Timeout::timeout(30) do
-        while true
-          POPUP_TITLES.each do |popup_title|
-            next unless 1 == autoit.WinWait(popup_title, "", 1)
-            raise unless 1 == autoit.ControlSetText(popup_title, "", "Edit1", path_to_file)
-            raise unless 1 == autoit.ControlSend(popup_title, "", "Button2", "{ENTER}")
-            # Retry if that didn't work
-            if 0 == autoit.WinWaitClose(popup_title, "", 1)
-              raise unless 1 == autoit.ControlSetText(popup_title, "", "Edit1", path_to_file)
-              raise unless 1 == autoit.ControlSend(popup_title, "", "Button2", "{ENTER}")
-            end
-            return
-          end # each
-        end # while
-      end
-    end
-
-    def value=(x)
-      @container.wait
-      filename = File.expand_path(x)
-      filename.gsub!("\/","\\")
-      filename.gsub!("\\","\\\\")
-      set(filename)
-    end
-  end
 
   # This class contains common methods to both radio buttons and check boxes.
   # Normally a user would not need to create this object as it is returned by the Watir::Container#checkbox or by Watir::Container#radio methods
