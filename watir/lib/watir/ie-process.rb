@@ -36,7 +36,7 @@ module Watir
       end
       
       # Returns the process id for the specifed hWnd.
-      def process_id_from_hwnd hwnd
+      def self.process_id_from_hwnd hwnd
         pid_info = ' ' * 32
         Win32API.new('user32', 'GetWindowThreadProcessId', 'ip', 'i').
         call(hwnd, pid_info)
