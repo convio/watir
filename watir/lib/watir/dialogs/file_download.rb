@@ -7,6 +7,7 @@ module Watir
       set_file_name x
       save_button.click
     end
+    alias :value= :set
 
     def open
       click_no_wait
