@@ -28,12 +28,11 @@ module Watir
 
         # Look for text in a table cell but continue on
         # if there is a match in an embedded table in that cell
-        if how == :has_cell && (match? element, how, what) && element.tables
-          element.tables.each {|table| return false if table.cell(:text, what).exists? }
-          next
+        if how == :has_cell
+          return false unless match_cell? element, what
+        else
+          return false unless match? element, how, what
         end
-
-        return false unless match? element, how, what
       end
       return true
     end
@@ -87,6 +86,17 @@ module Watir
       else
         raise MissingWayOfFindingObjectException,
           "#{how} is an unknown way of finding a <#{@tag}> element (#{what})"
+      end
+    end
+
+    def match_cell?(element, what)
+      if (match? element, :text, what)
+        if element.tables.length > 0
+          element.tables.each {|table| return false if table.cell(:text, what).exists? }
+        end
+        true
+      else
+        false
       end
     end
 

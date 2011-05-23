@@ -291,6 +291,10 @@ module Watir
       FileDownloadLink.new(self, how, what)
     end
 
+    def file_download_button(how, what=nil)
+      FileDownloadButton.new(self, how, what)
+    end
+
     def javascript_dialog(opts={})
       JavascriptDialog.new(opts)
     end

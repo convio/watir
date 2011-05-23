@@ -1,6 +1,6 @@
 module Watir
-  class FileDownloadLink < Watir::Link
 
+  module FileDownloadMethods
     def set(x)
       click_no_wait
       save_file_button.click
@@ -54,4 +54,13 @@ module Watir
     end
 
   end
+
+  class FileDownloadLink < Watir::Link
+    include FileDownloadMethods
+  end
+
+  class FileDownloadButton < Watir::Button
+    include FileDownloadMethods
+  end
+
 end
