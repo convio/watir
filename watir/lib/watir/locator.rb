@@ -90,13 +90,13 @@ module Watir
     end
 
     def match_cell?(element, what)
-      if (match? element, :text, what)
-        if element.tables.length > 0
-          element.tables.each {|table| return false if table.cell(:text, what).exists? }
-        end
-        true
+      if element.tables.length > 0
+        element.tables.each {|table| return false if table.cell(:text, what).exists? }
+        return true
+      elsif element.cell(:text, what).exists?
+        return true
       else
-        false
+        return match?(element, :text, what)
       end
     end
 
