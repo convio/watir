@@ -17,7 +17,14 @@ module Watir
           located_frame, document = locator.locate
           unless (located_frame.nil? && document.nil?)
             @o = located_frame
-            @document = document.document
+            begin
+              @document = document.document
+            rescue WIN32OLERuntimeError
+              # The frame is not directly accessible for security reasons
+              # You can work around this by using ie.goto frame().src
+              # and working with the frame in its own window
+            end
+
             break
           end
         end
