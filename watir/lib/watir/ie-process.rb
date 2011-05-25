@@ -7,7 +7,7 @@ module Watir
       def self.start
         program_files = ENV['ProgramFiles'] || "c:\\Program Files"
         startup_command = "#{program_files}\\Internet Explorer\\iexplore.exe"
-        startup_command << " -nomerge" if IE.version_parts.first.to_i == 8
+        startup_command << " -nomerge" if IE.version_parts.first.to_i >= 8
         startup_command << " -extoff" if  ENV['IE_NOEXT'] == 'true'
         process_info = ::Process.create('app_name' => "#{startup_command} about:blank")
         process_id = process_info.process_id

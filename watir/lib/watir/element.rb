@@ -283,7 +283,7 @@ module Watir
       assert_enabled
 
       highlight(:set)
-      ole_object.click
+      ole_object.click(0)
       highlight(:clear)
     end
 
