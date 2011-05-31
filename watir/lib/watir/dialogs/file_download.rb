@@ -3,7 +3,15 @@ module Watir
   module FileDownloadMethods
     def set(x)
       click_no_wait
-      save_file_button.click
+      # workaround till I can figure out how to save the file to a path
+      if IE.version_parts.first.to_i == 9
+        Watir::Wait.until{ @container.rautomation.child(:class=> /Notification/).exists?}
+        # Super hacky but this window is very non-standard and I'm unable to get
+        # to the buttons. So instead, send TAB, TAB, DOWN ARROW, A (Save As)
+        @container.rautomation.send_raw_keys 0x09, 0x09, 0x28, 0x41
+      else
+        save_file_button.click
+      end
       set_file_name x
       save_button.click
     end

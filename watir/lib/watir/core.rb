@@ -3,6 +3,8 @@
 require 'timeout'
 require 'watir/win32ole'
 
+require 'watir/rautomation_extensions'  # remove after accepted to rautomation
+
 # these are required already in commonwatir, but not when using click_no_wait!
 require 'watir/util'
 require 'watir/exceptions'

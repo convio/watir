@@ -265,7 +265,7 @@ module Watir
       end
     end
 
-    # return internet explorer instance as specified. if none is found, 
+    # return internet explorer instance as specified. if none is found,
     # return nil.
     # arguments:
     #   :url, url -- the URL of the IE browser window
@@ -359,7 +359,11 @@ module Watir
 
     # Return the status of the window, typically from the status bar at the bottom.
     def status
-      return @ie.statusText
+      begin
+        @ie.statusText
+      rescue WIN32OLERuntimeError
+        raise RuntimeError, "The status bar in IE is likely disabled. Please enable it if you would like to use this feature"
+      end
     end
 
     #

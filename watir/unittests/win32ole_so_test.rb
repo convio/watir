@@ -30,6 +30,6 @@ class TC_Win32OLE < Test::Unit::TestCase
 
     # now we get the HTML DOM object!
     body =  scriptEngine.document.body
-    assert(body.innerHTML =~ /html/)
+    assert(body.innerHTML =~ /value="Google Search"/)
   end
 end

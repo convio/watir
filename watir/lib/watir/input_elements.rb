@@ -88,7 +88,7 @@ module Watir
             break
           else
             option.selected = true
-            @o.fireEvent("onChange")
+            fire_event("onChange")
             @container.wait
             found = true
             break
@@ -325,14 +325,14 @@ module Watir
       @o.select
       value = self.value
       
-      @o.fireEvent("onSelect")
-      @o.fireEvent("ondragstart")
-      @o.fireEvent("ondrag")
-      destination.fireEvent("onDragEnter")
-      destination.fireEvent("onDragOver")
-      destination.fireEvent("ondrop")
+      fire_event("onSelect")
+      fire_event("ondragstart")
+      fire_event("ondrag")
+      destination.fire_event("onDragEnter")
+      destination.fire_event("onDragOver")
+      destination.fire_event("ondrop")
       
-      @o.fireEvent("ondragend")
+      fire_event("ondragend")
       destination.value = destination.value + value.to_s
       self.value = ""
     end
@@ -351,10 +351,10 @@ module Watir
       @o.scrollIntoView
       @o.focus
       @o.select
-      @o.fireEvent("onSelect")
+      fire_event("onSelect")
       @o.value = ""
-      @o.fireEvent("onKeyPress")
-      @o.fireEvent("onChange")
+      fire_event("onKeyPress")
+      fire_event("onChange")
       @container.wait
       highlight(:clear)
     end
@@ -389,27 +389,27 @@ module Watir
       if type_keys
 	      @o.focus
 	      @o.select
-	      @o.fireEvent("onSelect")
-	      @o.fireEvent("onKeyPress")
+	      fire_event("onSelect")
+	      fire_event("onKeyPress")
 	      @o.value = ""
 	      type_by_character(value)
-	      @o.fireEvent("onChange")
-	      @o.fireEvent("onBlur")
+	      fire_event("onChange")
+	      fire_event("onBlur")
 	    else
 				@o.value = limit_to_maxlength(value)
 	    end
       highlight(:clear)
     end
-    
-    # Sets the value of the text field directly. 
-    # It causes no events to be fired or exceptions to be raised, 
+
+    # Sets the value of the text field directly.
+    # It causes no events to be fired or exceptions to be raised,
     # so generally shouldn't be used.
     # It is preffered to use the set method.
     def value=(v)
       assert_exists
       @o.value = v.to_s
     end
-    
+
     def requires_typing #:nodoc:
     	@type_keys = true
     	self
@@ -420,7 +420,7 @@ module Watir
     end
 
     private
-    
+
     # Type the characters in the specified string (value) one by one.
     # It should not be used externally.
     #   * value - string - The string to enter into the text field
@@ -428,10 +428,10 @@ module Watir
       value = limit_to_maxlength(value)
       characters_in(value) do |c|
         sleep @container.typingspeed
-        @o.value = @o.value.to_s + c   
-        @o.fireEvent("onKeyDown")
-        @o.fireEvent("onKeyPress")
-        @o.fireEvent("onKeyUp")
+        @o.value = @o.value.to_s + c
+        fire_event("onKeyDown")
+        fire_event("onKeyPress")
+        fire_event("onKeyUp")
       end
     end
     
@@ -520,14 +520,6 @@ module Watir
     end
     alias checked? set?
     
-    # This method is the common code for setting or clearing checkboxes and radio.
-    def set_clear_item(set)
-      @o.checked = set
-      @o.fireEvent("onClick")
-      @container.wait
-    end
-    private :set_clear_item
-
     def radio_value=(x)
       @value = x
     end
@@ -549,7 +541,8 @@ module Watir
       assert_exists
       assert_enabled
       highlight(:set)
-      set_clear_item(false)
+      @o.checked = false
+      highlight(:clear)
       highlight(:clear)
     end
     
@@ -561,7 +554,8 @@ module Watir
       assert_enabled
       highlight(:set)
       @o.scrollIntoView
-      set_clear_item(true)
+      @o.checked = true
+      click
       highlight(:clear)
     end
 
@@ -612,11 +606,10 @@ module Watir
     def set(value=true)
       assert_exists
       assert_enabled
-      highlight :set
-      unless @o.checked == value
-        set_clear_item value
+      current_value = @o.checked
+      unless value == current_value
+        click
       end
-      highlight :clear
     end
     
     # Clears a check box.
