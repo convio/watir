@@ -337,12 +337,12 @@ module Watir
          when 'keydown', 'keypress', 'keyup'
            dom_event_type = 'KeyEvents'
            #   'type', bubbles, cancelable, windowObject, ctrlKey, altKey, shiftKey, metaKey, keyCode, charCode
-           dom_event_init = "initKeyEvent(\"#{event}\", true, true, #{@container.window_var}, false, false, false, false, 0, 0)"
+           dom_event_init = "initKeyEvent(\"#{event}\", true, true, #{@container.page_container.window}, false, false, false, false, 0, 0)"
          when 'click', 'dblclick', 'mousedown', 'mousemove', 'mouseout', 'mouseover',
                        'mouseup'
            dom_event_type = 'MouseEvents'
            #   'type', bubbles, cancelable, windowObject, detail, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget
-           dom_event_init = "initMouseEvent(\"#{event}\", true, true, #{@container.window_var}, 1, 0, 0, 0, 0, false, false, false, false, 0, null)"
+           dom_event_init = "initMouseEvent(\"#{event}\", true, true, #{@container.page_container.window}, 1, 0, 0, 0, 0, false, false, false, false, 0, null)"
          else
            dom_event_type = 'HTMLEvents'
            dom_event_init = "initEvents(\"#{event}\", true, true)"
