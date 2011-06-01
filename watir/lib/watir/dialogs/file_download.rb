@@ -1,18 +1,16 @@
 module Watir
 
   module FileDownloadMethods
-    def set(x)
-      click_no_wait
-      # workaround till I can figure out how to save the file to a path
+    def initialize(*args)
       if IE.version_parts.first.to_i == 9
-        Watir::Wait.until{ @container.rautomation.child(:class=> /Notification/).exists?}
-        # Super hacky but this window is very non-standard and I'm unable to get
-        # to the buttons. So instead, send TAB, TAB, DOWN ARROW, A (Save As)
-        @container.rautomation.send_raw_keys 0x09, 0x09, 0x28, 0x41
-      else
-        save_file_button.click
+        raise NotImplementedError, "File downloads using #{self.class} are not yet supported in IE9"
       end
-      set_file_name x
+    end
+
+    def set(filename)
+      click_no_wait
+      save_file_button.click
+      set_file_name filename
       save_button.click
     end
     alias :value= :set
@@ -24,7 +22,7 @@ module Watir
 
     # File Download Dialog
     def file_download_window
-      @file_download_window ||= wait_for_window('File Download', /save this file/)
+      @file_download_window ||= ::RAutomation::Window.new(:title => 'File Download', :text => /save this file/)
       @file_download_window
     end
 
@@ -38,7 +36,7 @@ module Watir
 
     # Save As Dialog
     def save_as_window
-      @save_window ||= wait_for_window('Save As')
+      @save_window ||=  ::RAutomation::Window.new(:title=>'Save As')
       @save_window
     end
 
@@ -48,17 +46,6 @@ module Watir
 
     def save_button
       save_as_window.button(:value=>'&Save')
-    end
-
-    def wait_for_window(title, text=nil)
-      args = {:title => title}
-      args.update(:text => text) if text
-      window = nil
-      Watir::Wait.until {
-        window = ::RAutomation::Window.new(args)
-        window.exists?
-      }
-      window
     end
 
   end
