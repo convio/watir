@@ -5,6 +5,7 @@ module Watir
       if IE.version_parts.first.to_i == 9
         raise NotImplementedError, "File downloads using #{self.class} are not yet supported in IE9"
       end
+      super
     end
 
     def set(filename)
