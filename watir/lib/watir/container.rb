@@ -269,26 +269,7 @@ module Watir
     #    browser.file_field(:index, 2)                         # access the second file upload on the page (1 based, so the first field is accessed with :index,1)
     #
     def file_field(how, what=nil)
-      FileUpload.new(self, how, what)
-    end
-
-    # This is the main method for downloading a file from a link.
-    # Valid values for 'how' are listed in the Watir Wiki - http://wiki.openqa.org/display/WTR/Methods+supported+by+Element
-    #
-    # Typical Usage
-    #
-    #   browser.file_download_link(:url, /login/)                              # access the first link whose url matches login. We can use a string in place of the regular expression
-    #   browser.file_download_link(:text, 'Click Me')                          # access the link that has Click Me as its text
-    #   browser.file_download_link(:xpath, "//a[contains(.,'Click Me')]/")     # access the link with Click Me as its text
-    #
-    # returns a FileDownloadLink object
-    #
-    # Typical Usage
-    #
-    #    browser.file_download_link(:text, 'download').set('output_file') # click the link and download the file with the new name
-    #
-    def file_download_link(how, what=nil)
-      FileDownloadLink.new(self, how, what)
+      FileField.new(self, how, what)
     end
 
     def file_download_button(how, what=nil)

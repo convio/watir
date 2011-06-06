@@ -19,12 +19,14 @@ module Watir
             @o = located_frame
             begin
               @document = document.document
-            rescue WIN32OLERuntimeError
-              # The frame is not directly accessible for security reasons
-              # You can work around this by using ie.goto frame().src
-              # and working with the frame in its own window
+            rescue WIN32OLERuntimeError => e
+              if e.message =~ /Access is denied/
+                # This frame's content is not directly accessible but let the
+                # user continue so they can access the frame properties
+              else
+                raise e
+              end
             end
-
             break
           end
         end
@@ -45,7 +47,11 @@ module Watir
     
     def document
       assert_exists
-      @document
+      if @document
+        @document
+      else
+        raise FrameAccessDeniedException, "IE will not allow access to this frame for security reasons. You can work around this with ie.goto(frame.src)"
+      end
     end
 
     def attach_command

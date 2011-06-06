@@ -49,6 +49,7 @@ module Watir
       highlight(:clear)
     end
 
+    
     # This method selects an item, or items in a select box, by text.
     # Raises NoValueFoundException   if the specified value is not found.
     #  * item   - the thing to select, string or reg exp
@@ -88,7 +89,7 @@ module Watir
             break
           else
             option.selected = true
-            fire_event("onChange")
+            dispatch_event("onChange")
             @container.wait
             found = true
             break
@@ -101,7 +102,7 @@ module Watir
       end
       highlight(:clear)
     end
-
+    
     # Returns array of all text items displayed in a select box
     # An empty array is returned if the select box has no contents.
     # Raises UnknownObjectException if the select box is not found
@@ -325,14 +326,14 @@ module Watir
       @o.select
       value = self.value
       
-      fire_event("onSelect")
-      fire_event("ondragstart")
-      fire_event("ondrag")
-      destination.fire_event("onDragEnter")
-      destination.fire_event("onDragOver")
-      destination.fire_event("ondrop")
+      dispatch_event("onSelect")
+      dispatch_event("ondragstart")
+      dispatch_event("ondrag")
+      destination.dispatch_event("onDragEnter")
+      destination.dispatch_event("onDragOver")
+      destination.dispatch_event("ondrop")
       
-      fire_event("ondragend")
+      dispatch_event("ondragend")
       destination.value = destination.value + value.to_s
       self.value = ""
     end
@@ -351,10 +352,10 @@ module Watir
       @o.scrollIntoView
       @o.focus
       @o.select
-      fire_event("onSelect")
+      dispatch_event("onSelect")
       @o.value = ""
-      fire_event("onKeyPress")
-      fire_event("onChange")
+      dispatch_event("onKeyPress")
+      dispatch_event("onChange")
       @container.wait
       highlight(:clear)
     end
@@ -383,18 +384,18 @@ module Watir
       assert_exists
       assert_enabled
       assert_not_readonly
-      
+
       highlight(:set)
       @o.scrollIntoView
       if type_keys
 	      @o.focus
 	      @o.select
-	      fire_event("onSelect")
-	      fire_event("onKeyPress")
+	      dispatch_event("onSelect")
+	      dispatch_event("onKeyPress")
 	      @o.value = ""
 	      type_by_character(value)
-	      fire_event("onChange")
-	      fire_event("onBlur")
+	      dispatch_event("onChange")
+	      dispatch_event("onBlur")
 	    else
 				@o.value = limit_to_maxlength(value)
 	    end
@@ -429,9 +430,9 @@ module Watir
       characters_in(value) do |c|
         sleep @container.typingspeed
         @o.value = @o.value.to_s + c
-        fire_event("onKeyDown")
-        fire_event("onKeyPress")
-        fire_event("onKeyUp")
+        dispatch_event("onKeyDown")
+        dispatch_event("onKeyPress")
+        dispatch_event("onKeyUp")
       end
     end
     
@@ -593,7 +594,7 @@ module Watir
 
     
   end
-  
+
   # This class is the watir representation of a check box.
   # Normally a user would not need to create this object as it is returned by the Watir::Container#checkbox method
   class CheckBox < RadioCheckCommon
@@ -606,10 +607,12 @@ module Watir
     def set(value=true)
       assert_exists
       assert_enabled
+      highlight :set
       current_value = @o.checked
       unless value == current_value
         click
       end
+      highlight :clear
     end
     
     # Clears a check box.
@@ -624,5 +627,5 @@ module Watir
     end
 
   end
-  
+
 end
