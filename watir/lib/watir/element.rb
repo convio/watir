@@ -429,6 +429,20 @@ module Watir
         super
       end
     end
+
+    def nextsibling
+      assert_exists
+      result = Element.new(ole_object.nextSibling)
+      result.set_container self
+      result
+    end
+
+    def prevsibling
+      assert_exists
+      result = Element.new(ole_object.previousSibling)
+      result.set_container self
+      result
+    end
   end
 
   class ElementMapper # Still to be used
