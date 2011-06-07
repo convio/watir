@@ -90,13 +90,15 @@ module Watir
     end
 
     def match_cell?(element, what)
-      return if element.tables.length > 0
-      return true if element.cell(:text, what).exists?
-      case element
-        when Watir::Table, Watir::TableRow, Watir::TableCell
-          element.cell(:text, what).exists? ? true : false
-        else
-          match?(element, :text, what)
+      # Iterate over embedded tables
+      if element.tables.size > 0
+        element.tables.each do |table|
+          return if table.cell(:text, what).exists? # don't match if an embedded table matches
+        end
+        return element.cell(:text, what).exists?
+      else
+        return true if element.cell(:text, what).exists?
+        match?(element, :text, what)
       end
     end
 

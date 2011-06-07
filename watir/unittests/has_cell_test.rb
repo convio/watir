@@ -18,7 +18,9 @@ class TC_HasCellTest < Test::Unit::TestCase
   end
 
   def test_inner_table
-    assert_equal('inner_table', browser.table(:has_cell, 'inner cell text').name)
+    assert_equal('outer_table', browser.table(:has_cell, 'some unique text').name)
+    assert_equal('inner_table_2', browser.table(:has_cell, 'some common text').name)
+    assert_equal('inner_table_2', browser.table(:has_cell, 'inner cell text').name)
     assert_equal('inner_row', browser.row(:has_cell, 'inner cell text').name)
     assert_equal('inner_cell', browser.cell(:has_cell, 'inner cell text').name)
     assert_equal(["inner cell text", 'other inner cell'], browser.row(:has_cell, 'inner cell text').to_a)

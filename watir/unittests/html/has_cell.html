@@ -6,19 +6,26 @@ Test page for :has_cell
 </head>
 <body>
 
-<table name='flat_table'>
+<table border=1 name='flat_table'>
+   <tr><th colspan=100%>Flat Table</th></tr>
    <tr name='flat_row'><td name='flat_cell'>cell text</td><td>other cell</td></tr>
 </table>
-
-<table name='outer_table'>
+<br>
+<table border=1  name='outer_table'>
+    <tr><th colspan=100%>Outer Table</th></tr>
+   <tr><td>some unique text</td></tr>
+   <tr><td>some common text</td></tr>
    <tr name='some_outer_row'><td name='some_outer_cell'>
-     <table name = 'some_inner_table'>
+     <table border=5  name = 'inner_table_1'>
+         <tr><th colspan=100%>Inner Table 1</th></tr>
        <tr name='some_inner_row'><td name='some_inner_cell'>some inner cell text</td><td>some other inner cell</td></tr>
      </table>
    </td></tr>
    <tr name='outer_row'><td name='outer_cell'>
-     <table name = 'inner_table'>
+     <table border=5  name = 'inner_table_2'>
+         <tr><th colspan=100%>Inner Table 2</th></tr>
        <tr name='inner_row'><td name='inner_cell'>inner cell text</td><td>other inner cell</td></tr>
+       <tr name='inner_row'><td colspan=100%>some common text</td></tr>
      </table>
    </td></tr>
 </table>
