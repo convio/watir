@@ -163,14 +163,14 @@ module Watir
     # row of the table
     #   * columnnumber  - column index to extract values from
     def column_values(columnnumber)
-      return (1..row_count).collect {|i| self[i][columnnumber].text}
+      to_a.map {|row| row[columnnumber-1]}
     end
-    
+
     # Returns an array containing all the text values in the specified row
     # Raises an UnknownObjectException if the table doesn't exist.
     #   * rownumber  - row index to extract values from
     def row_values(rownumber)
-      return (1..column_count(rownumber)).collect {|i| self[rownumber][i].text}
+      to_a[rownumber -1]
     end
     
   end
