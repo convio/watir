@@ -128,11 +128,15 @@ module Watir
     # Takes an optional parameter *max_depth*, which is by default 1
     def to_a(max_depth=1)
       assert_exists
-      y = []
-      @o.rows.each do |row|
-        y << TableRow.new(@container, :ole_object, row).to_a(max_depth)
+      t = []
+      (1..row_count_excluding_nested_tables).each do |row|
+        r = []
+        (1..column_count(row)).each do |col|
+          r << self[row][col].locate.innerText.strip
+        end
+        t << r
       end
-      y
+      t
     end
     
     def table_body(index=1)
@@ -316,22 +320,11 @@ module Watir
     #
     # Works with th, td elements, colspan, rowspan and nested tables.
     # Takes an optional parameter *max_depth*, which is by default 1
-    def to_a(max_depth=1)
+    def to_a
       assert_exists
       y = []
-      @o.cells.each do |cell|
-        inner_tables = cell.getElementsByTagName("TABLE")
-        inner_tables.each do |inner_table|
-          # make sure that the inner table is directly child for this cell
-          if inner_table?(cell, inner_table)
-            max_depth -= 1
-            y << Table.new(@container, :ole_object, inner_table).to_a(max_depth) if max_depth >= 1
-          end
-        end
-
-        if inner_tables.length == 0
-          y << cell.innerText.strip
-        end
+      (1..column_count).each do |col|
+        y << self[col].locate.innerText.strip
       end
       y
     end
