@@ -34,5 +34,6 @@ require 'watir/modal_dialog'
 require 'watir/module'
 
 require 'rautomation'
+require 'watir/dialogs/file_download'
 require 'watir/dialogs/file_field'
 require 'watir/dialogs/javascript'
