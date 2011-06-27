@@ -132,6 +132,13 @@ module Watir
       return ole_object.innerText.strip
     end
 
+    # IE9 only returns empty string for ole_object.name for non-input elements
+    # so get at it through the attribute which will make the matchers work
+    def name
+      assert_exists
+      ole_object.getAttribute('name') || ''
+    end
+
     def ole_inner_elements
       assert_exists
       return ole_object.all
@@ -356,22 +363,18 @@ module Watir
            event_type = 'HTMLEvents'
            event_args = [event, true, true]
          when 'keydown', 'keypress', 'keyup'
-           event_name = :initKeyEvent
-           event_type = 'KeyEvents'
+           event_name = :initKeyboardEvent
+           event_type = 'KeyboardEvent'
            # 'type', bubbles, cancelable, windowObject, ctrlKey, altKey, shiftKey, metaKey, keyCode, charCode
-           event_args = [event, true, true, @container.page_container.document.parentWindow, false, false, false, false, 0, 0]
-         when 'click', 'dblclick', 'mousedown', 'mousemove', 'mouseout', 'mouseover',
-                       'mouseup'
+           event_args = [event, true, true, @container.page_container.document.parentWindow.window, false, false, false, false, 0, 0]
+         when 'click', 'dblclick', 'mousedown', 'mousemove', 'mouseout', 'mouseover', 'mouseup',
+              'contextmenu', 'drag', 'dragstart', 'dragenter', 'dragover', 'dragleave', 'dragend', 'drop', 'selectstart'
            event_name = :initMouseEvent
            event_type = 'MouseEvents'
            # 'type', bubbles, cancelable, windowObject, detail, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget
-           event_args = [event, true, true, @container.page_container.document.parentWindow, 1, 0, 0, 0, 0, false, false, false, false, 0, nil]
+           event_args = [event, true, true, @container.page_container.document.parentWindow.window, 1, 0, 0, 0, 0, false, false, false, false, 0, @container.page_container.document]
          else
-           dom_event_type = 'HTMLEvents'
-           dom_event_init = "initEvents(\"#{event}\", true, true)"
-           event_name = :initEvents
-           event_type = 'HTMLEvents'
-           event_args = [true, true]
+           raise UnhandledEventException, "Don't know how to trigger event '#{event}'"
        end
        event = @container.page_container.document.createEvent(event_type)
        event.send event_name, *event_args
