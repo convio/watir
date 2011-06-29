@@ -173,6 +173,8 @@ module Watir
       @ole_object = nil
       @page_container = self
       @error_checkers = []
+      @waiters = {}
+      load_default_waiters
       @activeObjectHighLightColor = HIGHLIGHT_COLOR
 
 
@@ -515,33 +517,42 @@ module Watir
     def wait(no_sleep=false)
       @xml_parser_doc = nil
       @down_load_time = 0.0
-      interval = 0.05
-      start_load_time = Time.now
+      @interval = 0.05
+      @start_load_time = Time.now
 
       Timeout::timeout(5*60) do
-        begin
-          while @ie.busy
-            sleep interval
-          end
+        run_waiters
+      end
 
-          until READYSTATES.has_value?(@ie.readyState)
-            sleep interval
-          end
+      @down_load_time = Time.now - @start_load_time
+      run_error_checks
+      sleep @pause_after_wait unless no_sleep
+      @down_load_time
+    end
 
-          until @ie.document
-            sleep interval
-          end
+    def check_for_closed_ie_window(&block)
+      begin
+        block.call
+      rescue WIN32OLERuntimeError # IE window must have been closed
+        @down_load_time = Time.now - @start_load_time
+        return @down_load_time
+      end
+    end
 
-          documents_to_wait_for = [@ie.document]
-        rescue WIN32OLERuntimeError # IE window must have been closed
-          @down_load_time = Time.now - start_load_time
-          return @down_load_time
-        end
+    def load_default_waiters
+      waiter = lambda{check_for_closed_ie_window {sleep @interval while @ie.busy}}
+      add_waiter(:ie_busy, waiter)
 
+      waiter = lambda{check_for_closed_ie_window {sleep @interval until READYSTATES.has_value?(@ie.readyState)}}
+      add_waiter(:ie_readystates, waiter)
+
+      waiter = lambda{
+        check_for_closed_ie_window {sleep @interval until @ie.document}
+        documents_to_wait_for = [@ie.document]
         while doc = documents_to_wait_for.shift
           begin
             until READYSTATES.has_key?(doc.readyState.to_sym)
-              sleep interval
+              sleep @interval
             end
             @url_list << doc.location.href unless @url_list.include?(doc.location.href)
             doc.frames.length.times do |n|
@@ -553,12 +564,8 @@ module Watir
           rescue WIN32OLERuntimeError
           end
         end
-      end
-
-      @down_load_time = Time.now - start_load_time
-      run_error_checks
-      sleep @pause_after_wait unless no_sleep
-      @down_load_time
+      }
+      add_waiter(:ie_document_readystates, waiter)
     end
 
     # Error checkers
@@ -578,6 +585,22 @@ module Watir
     # *  checker   Proc Object, the checker that is to be disabled
     def disable_checker(checker)
       @error_checkers.delete(checker)
+    end
+
+    def run_waiters
+      @waiters.each_pair { |key, value| value.call(self)}
+    end
+
+    def add_waiter(name, waiter)
+      @waiters[name] = waiter
+    end
+
+    def disable_waiter(name)
+      @waiters.delete(name)
+    end
+
+    def waiters
+      @waiters.keys
     end
 
     #
