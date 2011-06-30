@@ -551,9 +551,7 @@ module Watir
         documents_to_wait_for = [@ie.document]
         while doc = documents_to_wait_for.shift
           begin
-            until READYSTATES.has_key?(doc.readyState.to_sym)
-              sleep @interval
-            end
+            sleep @interval until READYSTATES.has_key?(doc.readyState.to_sym) rescue false
             @url_list << doc.location.href unless @url_list.include?(doc.location.href)
             doc.frames.length.times do |n|
               begin
