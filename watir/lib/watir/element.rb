@@ -358,10 +358,14 @@ module Watir
        # See http://www.howtocreate.co.uk/tutorials/javascript/domevents
        case event
          when 'abort', 'blur', 'change', 'error', 'focus', 'load',
-              'reset', 'resize', 'scroll', 'select', 'submit', 'unload'
+              'reset', 'resize', 'scroll', 'submit', 'unload'
            event_name = :initEvent
            event_type = 'HTMLEvents'
            event_args = [event, true, true]
+         when 'select'
+           event_name = :initUIEvent
+           event_type = 'UIEvent'
+           event_args = [event, true, true, @container.page_container.document.parentWindow.window,0]
          when 'keydown', 'keypress', 'keyup'
            event_name = :initKeyboardEvent
            event_type = 'KeyboardEvent'
@@ -387,7 +391,7 @@ module Watir
     def focus
       assert_exists
       assert_enabled
-      ole_object.focus
+      ole_object.focus(0)
     end
 
     # Returns whether this element actually exists.
