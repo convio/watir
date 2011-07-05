@@ -589,7 +589,6 @@ module Watir
     def run_waiters
       # run the waiters but sort by the specified order
       @waiters.each_pair.sort_by {|key, value| @waiter_order[key]}.each do |waiter|
-        puts waiter[0]
         waiter[1].call(self)
       end
     end
