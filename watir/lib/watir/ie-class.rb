@@ -174,6 +174,7 @@ module Watir
       @page_container = self
       @error_checkers = []
       @waiters = {}
+      @waiter_order = {}
       load_default_waiters
       @activeObjectHighLightColor = HIGHLIGHT_COLOR
 
@@ -541,10 +542,10 @@ module Watir
 
     def load_default_waiters
       waiter = lambda{check_for_closed_ie_window {sleep @interval while @ie.busy}}
-      add_waiter(:ie_busy, waiter)
+      add_waiter(:ie_busy, waiter, 10)
 
       waiter = lambda{check_for_closed_ie_window {sleep @interval until READYSTATES.has_value?(@ie.readyState)}}
-      add_waiter(:ie_readystates, waiter)
+      add_waiter(:ie_readystates, waiter, 11)
 
       waiter = lambda{
         check_for_closed_ie_window {sleep @interval until @ie.document}
@@ -560,7 +561,10 @@ module Watir
           end
         end
       }
-      add_waiter(:ie_document_readystates, waiter)
+      add_waiter(:ie_document_readystates, waiter, 12)
+
+      waiter = lambda{check_for_closed_ie_window {sleep @interval until @ie.document && @ie.document.body}}
+      add_waiter(:ie_document_body, waiter, 13)
     end
 
     # Error checkers
@@ -583,15 +587,21 @@ module Watir
     end
 
     def run_waiters
-      @waiters.each_pair { |key, value| value.call(self)}
+      # run the waiters but sort by the specified order
+      @waiters.each_pair.sort_by {|key, value| @waiter_order[key]}.each do |waiter|
+        puts waiter[0]
+        waiter[1].call(self)
+      end
     end
 
-    def add_waiter(name, waiter)
+    def add_waiter(name, waiter, sort_order=100)
       @waiters[name] = waiter
+      @waiter_order[name] = sort_order
     end
 
     def disable_waiter(name)
       @waiters.delete(name)
+      @waiter_order.delete(name)
     end
 
     def waiters
