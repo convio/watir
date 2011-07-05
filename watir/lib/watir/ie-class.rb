@@ -139,17 +139,17 @@ module Watir
     # IE.attach(:hwnd, 528140)
     # This method will not work when
     # Watir/Ruby is run under a service (instead of a user).
-    def self.attach how, what
+    def self.attach how, what, wait_for_ie=true
       ie = new true # don't create window
-      ie._attach_init(how, what)
+      ie._attach_init(how, what, wait_for_ie)
       ie
     end
 
     # this method is used internally to attach to an existing window
-    def _attach_init how, what
+    def _attach_init how, what, wait_for_ie=true
       attach_browser_window how, what
       initialize_options
-      wait
+      wait if wait_for_ie
     end
 
     # Return an IE object that wraps the given window, typically obtained from
