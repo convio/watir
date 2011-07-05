@@ -550,16 +550,13 @@ module Watir
         check_for_closed_ie_window {sleep @interval until @ie.document}
         documents_to_wait_for = [@ie.document]
         while doc = documents_to_wait_for.shift
-          begin
-            sleep @interval until READYSTATES.has_key?(doc.readyState.to_sym) rescue false
+          sleep @interval until READYSTATES.has_key?(doc.readyState.to_sym) rescue false
+          if doc.respond_to? :location
             @url_list << doc.location.href unless @url_list.include?(doc.location.href)
-            doc.frames.length.times do |n|
-              begin
-                documents_to_wait_for << doc.frames[n.to_s].document
-              rescue WIN32OLERuntimeError, NoMethodError
-              end
-            end
-          rescue WIN32OLERuntimeError
+          end
+          next unless doc.respond_to? :frames
+          doc.frames.length.times do |n|
+            documents_to_wait_for << doc.frames[n.to_s].document
           end
         end
       }
