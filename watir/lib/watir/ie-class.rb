@@ -253,13 +253,13 @@ module Watir
     end
 
     def self.version
-      begin
-        require 'win32/registry'
-        ::Win32::Registry::HKEY_LOCAL_MACHINE.open("SOFTWARE\\Microsoft\\Internet Explorer") do |ie_key|
-          ie_key.read('Version').last
-        end
-        # OR: ::WIN32OLE.new("WScript.Shell").RegRead("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Internet Explorer\\Version")
-      end
+      @ie_version ||= begin
+                        require 'win32/registry'
+                        ::Win32::Registry::HKEY_LOCAL_MACHINE.open("SOFTWARE\\Microsoft\\Internet Explorer") do |ie_key|
+                          ie_key.read('Version').last
+                        end
+                        # OR: ::WIN32OLE.new("WScript.Shell").RegRead("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Internet Explorer\\Version")
+                      end
     end
 
     def self.version_parts
@@ -468,16 +468,18 @@ module Watir
     end
 
     def autoit
-      raise NotImplementedError, 'Watir no longer uses AutoIT. ' <<
-                                 'If you need this functionality you can downgrade to v1.8.1 ' <<
-                                 'or update your scripts to use ie.rautomation. ' <<
-                                 'Please refer to https://github.com/jarmo/RAutomation'
+      Kernel.warn "Usage of Watir::IE#autoit method is DEPRECATED! Use Watir::IE#rautomation method instead. Refer to https://github.com/jarmo/RAutomation for updating your scripts."
+      @autoit ||= ::RAutomation::Window.new(:hwnd => hwnd, :adapter => :autoit)
+      @autoit
     end
 
     # Activates the window and sends keys to it.
     #
-    # Refer to MSDN documentation at http://msdn.microsoft.com/en-us/library/dd375731(v=VS.85).aspx
-    # for the keycodes.
+    # Example:
+    #   browser.send_keys("Hello World{enter}")
+    #
+    # Refer to RAutomation::Adapter::WinFfi::KeystrokeConverter.convert_special_characters for
+    # special characters conversion.
     # @see RAutomation::Window#send_keys
     def send_keys(key_string)
       rautomation.send_keys key_string
