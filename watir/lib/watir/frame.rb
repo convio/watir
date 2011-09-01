@@ -34,6 +34,7 @@ module Watir
     end
 
     def ole_inner_elements
+      Watir::Wait.until {document.body}
       document.body.all
     end
     private :ole_inner_elements
