@@ -14,6 +14,16 @@ module Watir
       @@attach_timeout = timeout
     end
 
+    # Maximum number of seconds to wait when loading a window
+    @@page_load_timeout = 5 * 60 # default value
+    def self.page_load_timeout
+      @@page_load_timeout
+    end
+    def self.page_load_timeout(timeout)
+      @@page_load_timeout = timeout
+    end
+
+
     # Return the options used when creating new instances of IE.
     # BUG: this interface invites misunderstanding/misuse such as IE.options[:speed] = :zippy]
 		def self.options
@@ -523,7 +533,7 @@ module Watir
       @interval = 0.05
       @start_load_time = Time.now
 
-      Timeout::timeout(5*60) do
+      Timeout::timeout(@@page_load_timeout) do
         run_waiters
       end
 
