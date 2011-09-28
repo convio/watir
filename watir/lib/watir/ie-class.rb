@@ -527,14 +527,24 @@ module Watir
     # =nodoc
     # Note: This code needs to be prepared for the ie object to be closed at 
     # any moment!
-    def wait(no_sleep=false)
+    def wait(no_sleep=false, no_retry=false)
       @xml_parser_doc = nil
       @down_load_time = 0.0
       @interval = 0.05
       @start_load_time = Time.now
 
-      Timeout::timeout(@@page_load_timeout) do
-        run_waiters
+      begin
+        Timeout::timeout(@@page_load_timeout) do
+          run_waiters
+        end
+      rescue Timeout::Error => e
+        if no_retry
+          raise e
+        else
+          puts 'Timed out loading page...continuing'
+          @ie.refresh2(3)
+          return wait(false, true)
+        end
       end
 
       @down_load_time = Time.now - @start_load_time
