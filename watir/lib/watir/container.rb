@@ -277,7 +277,7 @@ module Watir
     end
 
     def javascript_dialog(opts={})
-      JavascriptDialog.new(opts)
+      JavascriptDialog.new(self, opts)
     end
     alias :dialog :javascript_dialog
 
