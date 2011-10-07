@@ -68,7 +68,7 @@ end
 task :deploy => [:clean, :test_watir, :gems] do
   Dir.chdir("gems") do
     watir_gem = Dir['watir*.gem'].first
-    sh "gem install --local -i c:/gemserver/ruby/gems --no-ri #{watir_gem}"
+    sh "gem install --local -i c:\\gem_server --no-ri #{watir_gem} --ignore-dependencies"
   end
 end
 
