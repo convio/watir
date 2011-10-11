@@ -19,7 +19,7 @@ end
 class Array
   def matches(x)
     self.each do |item|
-      return self.index(item) if item.matches x
+      return self.index(item) if x.matches item
     end
     return false
   end
