@@ -27,7 +27,7 @@ module Watir
         end
       rescue Wait::TimeoutError => e
         raise NoMatchingWindowFoundException,
-          "Unable to attach to Modal Window after #{e.duration} seconds."
+          "Unable to attach to Modal Window after #{IE.attach_timeout} seconds."
       end
       @document = WIN32OLE.connect_unknown(intUnknown)
     end
