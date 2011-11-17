@@ -68,7 +68,7 @@ module Watir
 
     # When checking to see if the modal exists we give it some time to
     # find it. So if it does see a modal it returns immediately, otherwise it waits and checks
-    def exists?(timeout=5)
+    def exists?(timeout=10)
       begin
         Watir::Wait.until(timeout) {@modal.exists?}
       rescue Watir::Wait::TimeoutError
