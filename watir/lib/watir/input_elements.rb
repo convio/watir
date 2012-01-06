@@ -612,7 +612,7 @@ module Watir
       element = x
       while element
         text << element.innerText rescue ''
-        break if text != ''
+        break if text.strip != ''
         element = element.nextSibling
       end
       text
