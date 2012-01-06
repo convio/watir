@@ -592,6 +592,48 @@ module Watir
     end
     private :checked_button
 
+    def text
+      assert_exists
+      begin
+        if in_table?
+          text = sibling_text(parent_cell)
+        else
+          text = sibling_text(ole_object)
+        end
+      rescue
+        ''
+      end
+      text.strip
+    end
+
+    def sibling_text(x)
+      assert_exists
+      text = ''
+      element = x
+      while element
+        text << element.innerText rescue ''
+        break if text != ''
+        element = element.nextSibling
+      end
+      text
+    end
+
+    def in_table?
+      assert_exists
+      element = ole_object
+      while element && element = element.parentElement
+        return true if element.nodeName == 'TABLE'
+      end
+      false
+    end
+
+    def parent_cell
+      assert_exists
+      element = ole_object
+      while element && element = element.parentElement
+        return element if element.nodeName == 'TD'
+      end
+    end
     
   end
 

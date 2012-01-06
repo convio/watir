@@ -206,6 +206,25 @@ class TC_Radios < Test::Unit::TestCase
     tea.clear
     assert_false(tea.isSet?)
   end
-  
+
+  def test_text_specified
+      tea = browser.radio(:text => 'Tea')
+      milk = browser.radio(:text => 'Milk')
+
+      assert(tea.exists?)
+      assert(milk.exists?)
+
+      milk.set
+      assert(milk.isSet?)
+      assert_false(tea.isSet?)
+
+      tea.set
+      assert_false(milk.isSet?)
+      assert(tea.isSet?)
+
+      tea.clear
+      assert_false(tea.isSet?)
+    end
+
 end
 
