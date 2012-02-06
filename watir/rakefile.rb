@@ -10,14 +10,14 @@ require 'watir-rdoc'
 
 $VERBOSE = nil
 desc 'Generate Watir API Documentation'
-Rake::RDocTask.new('rdoc') do |rdoc| 
+Rake::RDocTask.new('rdoc') do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.options += $WATIR_RDOC_OPTIONS
   rdoc.rdoc_files.include('lib/watir/ie.rb')
   $WATIR_EXTRA_RDOC_FILES.each do |file|
     rdoc.rdoc_files.include(file)
   end
-  rdoc.rdoc_files.include('lib/watir/contrib/*.rb')  
+  rdoc.rdoc_files.include('lib/watir/contrib/*.rb')
   rdoc.rdoc_files.include('lib/watir/dialogs/*.rb')
   rdoc.rdoc_files.include('lib/watir/*.rb')
   rdoc.rdoc_files.exclude('lib/watir/camel_case.rb')
