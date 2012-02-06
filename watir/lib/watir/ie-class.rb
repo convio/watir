@@ -563,13 +563,13 @@ module Watir
     end
 
     def load_default_waiters
-      waiter = lambda{check_for_closed_ie_window {sleep @interval while @ie.busy}}
+      waiter = proc{check_for_closed_ie_window {sleep @interval while @ie.busy}}
       add_waiter(:ie_busy, waiter, 10)
 
-      waiter = lambda{check_for_closed_ie_window {sleep @interval until READYSTATES.has_value?(@ie.readyState)}}
+      waiter = proc{check_for_closed_ie_window {sleep @interval until READYSTATES.has_value?(@ie.readyState)}}
       add_waiter(:ie_readystates, waiter, 11)
 
-      waiter = lambda{
+      waiter = proc{
         check_for_closed_ie_window {sleep @interval until @ie.document}
         documents_to_wait_for = [@ie.document]
         while doc = documents_to_wait_for.shift
@@ -585,7 +585,7 @@ module Watir
       }
       add_waiter(:ie_document_readystates, waiter, 12)
 
-      waiter = lambda{check_for_closed_ie_window {sleep @interval until @ie.document && @ie.document.body}}
+      waiter = proc{check_for_closed_ie_window {sleep @interval until @ie.document && @ie.document.body}}
       add_waiter(:ie_document_body, waiter, 13)
     end
 
