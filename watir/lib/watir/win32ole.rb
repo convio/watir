@@ -10,3 +10,4 @@ else
   # loading win32ole from stdlib
 end
 
+require 'win32ole'
