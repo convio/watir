@@ -2,7 +2,7 @@ require 'rubygems'
 require 'rake/clean'
 require 'fileutils'
 
-projects = ['watir', 'firewatir', 'commonwatir']
+projects = ['watir', 'commonwatir']
 
 def launch_subrake(cmd)
   command = "#{Gem.ruby} -S rake #{cmd}"
@@ -48,19 +48,12 @@ task :clean => [:clean_subprojects] do
   FileUtils.rm_r Dir.glob("gems/*") << "test/reports", :force => true
 end
 
-desc "Run tests for Watir and FireWatir"
-task :test => [:test_watir, :test_firewatir]
+desc "Run tests for Watir"
+task :test => [:test_watir]
 
 desc 'Run tests for Watir'
 task :test_watir do
   Dir.chdir("watir") do
-    launch_subrake "test"
-  end
-end
-
-desc 'Run tests for FireWatir'
-task :test_firewatir do
-  Dir.chdir("firewatir") do
     launch_subrake "test"
   end
 end
