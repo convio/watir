@@ -21,7 +21,7 @@ require 'watir/browser'
 Watir::Browser.default = 'ie'
 require 'unittests/setup/lib'
 require 'watir/testcase'
-
+         Watir::IE.zero_based_indexing = false
 # Standard Tags
 # :must_be_visible
 # :creates_windows

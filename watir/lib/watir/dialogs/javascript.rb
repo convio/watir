@@ -1,7 +1,7 @@
 module Watir
 
   class JavascriptDialog
-    WINDOW_TITLES = ['Message from webpage', 'Windows Internet Explorer','Microsoft Internet Explorer']
+    WINDOW_TITLES = ['Message from webpage', 'Windows Internet Explorer','Microsoft Internet Explorer',/Mensaje de p.*/]
 
     def initialize(container, opts={})
       @container = container
@@ -29,6 +29,13 @@ module Watir
       @window ||= ::RAutomation::Window.new(:title => @opts[:title] || /^(#{WINDOW_TITLES.join('|')})$/)
     end
 
+    Watir::Container.module_eval do
+      def javascript_dialog(opts={})
+        JavascriptDialog.new(opts)
+      end
+
+      alias_method :dialog, :javascript_dialog
+    end
   end
 end
 

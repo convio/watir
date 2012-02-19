@@ -1,4 +1,61 @@
-== Version 1.9.2 - 2011/xx/xx
+== Version 2.0.4 - 2011/10/29
+
+* IE#execute_script escapes multi-line JavaScript scripts
+* allow css and xpath locators for element collection methods, fixes http://jira.openqa.org/browse/WTR-493
+
+== Version 2.0.3 - 2011/10/21
+
+* fix ElementCollections#[]
+* fix IE::Process.start for IE9 when opening multiple windows
+* add support for Spanish JavaScript and file upload dialogs
+* fix IE#execute_script for Ruby 1.9 with IE9
+
+== Version 2.0.2 - 2011/09/10
+
+* added support for del, ins, font, meta and ol tags
+* added support for h1, h2, h3, h4, h5, h6 and ul collection methods
+* Watir::IE#execute_script returns now the value of the JavaScript evaluation
+* Watir::IE#fire_event now checks for the document mode in IE9
+* Watir::Table#rows method iterates correctly over rows
+* speed up dealing with html elements in some situations
+
+== Version 2.0.1 - 2011/08/10
+
+* fixed Watir::IE#close for Ruby 1.9.2 - fixes http://jira.openqa.org/browse/WTR-481
+* fixed locating elements on Ruby 1.9.2
+
+== Version 2.0.0 - 2011/08/10
+
+* RIP FireWatir - there won't be any new releases due to the lack of JSSH extension for Firefox 4+ versions.
+* all elements are using 0-based indexing instead of old 1-based indexing:
+ - disable it temporarily: require "watir"; Watir.options[:zero_based_indexing] = false
+* #radio and #checkbox methods doesn't allow 3 parameters anymore for locating with "value"
+ - use browser.radio(:name => "something", :value => "some value") syntax instead for locating with "value"
+* all element methods accept now multiple-specifiers with hash syntax, for example:
+ - browser.element(:class => "someclass", :name => "somename")
+* all elements are searchable by :xpath and :css now (note that it's usually slower than searching by other specifiers)
+* #button, #form and #frame doesn't accept single string as a specifier anymore to search by name:
+ - use browser.frame(:name => "name") or browser.frame(:name, "name") syntax instead
+* :index => 0 is used as a default specifier if nothing is specified:
+ - browser.div(:id => "id").table.tr is same as browser.div(:id => "id").table(:index => 0).tr(:index => 0)
+* all collection methods accept now specifiers too:
+ - browser.divs(:class => "someclass").each {|div| puts div.class_name} # => "someclass"
+* removed FormElement class
+* added aliases:
+ - tr => row
+ - trs => rows
+ - td => cell
+ - tds => cells
+ - a => link
+ - as => links 
+ - img => image
+ - imgs => images
+
+== Version 1.9.3 - 2011/07/24
+
+* Only FireWatir version released to make a dependency for commonwatir to be less strict to make it possible to use FireWatir together with Watir 2+ versions if needed.
+
+== Version 1.9.2 - 2011/07/11
 
 === IE improvements
 * Bump RAutomation dependency version to 0.6.2 to:

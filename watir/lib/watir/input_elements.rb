@@ -2,7 +2,8 @@ module Watir
   
   class InputElement < Element #:nodoc:all
     def locate
-      @o = @container.locate_input_element(@how, @what, self.class::INPUT_TYPES)
+      locator_or_element = @container.input_element_locator(@how, @what, self.class::INPUT_TYPES, self.class)
+      @o = locator_or_element.is_a?(WIN32OLE) ? locator_or_element : locator_or_element.locate
     end
     def initialize(container, how, what)
       set_container container
@@ -501,13 +502,23 @@ module Watir
   # most of the methods available to this element are inherited from the Element class
   class RadioCheckCommon < InputElement
     def locate #:nodoc:
-      @o = @container.locate_input_element(@how, @what, self.class::INPUT_TYPES, @value, self.class)
+      if @value
+        case @how
+          when Hash
+            @how.update(:value => @value)
+          else
+            @how = {@how=>@what, :value => @value}
+            @what = nil
+        end
+      end
+      locator_or_element = @container.input_element_locator(@how, @what, self.class::INPUT_TYPES, self.class)
+      @o = locator_or_element.is_a?(WIN32OLE) ? locator_or_element : locator_or_element.locate
     end
     def initialize(container, how, what, value=nil)
       super container, how, what
       @value = value
     end
-    
+
     def inspect
       '#<%s:0x%x located=%s how=%s what=%s value=%s>' % [self.class, hash*2, !!ole_object, @how.inspect, @what.inspect, @value.inspect]
     end
@@ -631,7 +642,7 @@ module Watir
       assert_exists
       element = ole_object
       while element && element = element.parentElement
-        return element if element.nodeName == 'TD'
+        return element if element.nodeName == 'TD' || element.nodeName == 'TH'
       end
     end
     
@@ -668,6 +679,19 @@ module Watir
       x ? set : clear
     end
 
+    Watir::Container.module_eval do
+      remove_method :check_boxs
+
+      def checkboxes(how={}, what=nil)
+        CheckBoxes.new(self, how, what)
+      end
+
+      remove_method :check_box
+
+      def checkbox(how={}, what=nil)
+        CheckBox.new(self, how, what)
+      end
+    end
   end
 
 end

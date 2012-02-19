@@ -1,9 +1,8 @@
 # Unit Test for Internet Explorer
 
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..') unless $SETUP_LOADED
-require 'watir/win32ole'
+require 'unittests/setup'
 require 'unittests/ie_mock'
-require 'test/unit'
 
 class TC_ie < Test::Unit::TestCase
   include Watir::Exception
@@ -25,25 +24,34 @@ class TC_ie < Test::Unit::TestCase
   
   # is this correct? 
   def test_getLink_ByIndexReturnsNilOnNoLinks
-    assert_nil(@faked_ie.locate_tagged_element('A', :index, 1))
-    assert_nil(@faked_ie.locate_tagged_element('A', :index, 1))
+    assert_nil(@faked_ie.tagged_element_locator('A', :index, 0))
+    assert_nil(@faked_ie.tagged_element_locator('A', :index, 0))
   end
   
   def test_getLink_ByBadHow
     @faked_ie.addLink "foo"
     assert_raise(MissingWayOfFindingObjectException) do
-      @faked_ie.locate_tagged_element('A', :no_such_mechanism, "verifying error handling")
+      @faked_ie.tagged_element_locator('A', :no_such_mechanism, "verifying error handling")
     end
+  end
+
+  def test_execute_script
+    script = %q[
+      var x = 'something';
+      var y = " else";
+      x + y;
+    ]
+    assert_equal "something else", browser.execute_script(script)
   end
   
   # is this correct? 
   def test_getLink_ByUrlReturnsNilOnNoLinks
-    assert_nil(@faked_ie.locate_tagged_element('A', :url, "whatever"))
+    assert_nil(@faked_ie.tagged_element_locator('A', :url, "whatever"))
   end
-  
+    
   # is this correct? 
   def test_getLink_ByTextReturnsNilOnNoLinks
-    assert_nil(@faked_ie.locate_tagged_element('A', :text, "whatever"))
+    assert_nil(@faked_ie.tagged_element_locator('A', :text, "whatever"))
   end
 
 end
