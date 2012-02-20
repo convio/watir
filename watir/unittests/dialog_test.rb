@@ -30,15 +30,6 @@ class TC_Dialog_Test < Test::Unit::TestCase
     browser.javascript_dialog.button("OK").click
   end
 
-  def test_copy_array_elements
-    a = ['a', 'b', 'c']
-    copy = Array.new(a)
-    c = []
-    code = _code_that_copies_readonly_array(a, "c")
-    eval code
-    assert_equal copy, c
-  end
-
   def test_confirm_ok
     browser.button(:value, 'confirm').click_no_wait
     Watir::Wait.until(5) {browser.javascript_dialog.exists?}
