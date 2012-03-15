@@ -1,10 +1,11 @@
+$: << File.dirname(__FILE__)
 require 'rubygems'
 require 'rake'
 require 'rake/clean'
 require 'rake/packagetask'
 require 'rake/testtask'
-require 'rake/rdoctask'
-require 'rake/gempackagetask'
+require 'rdoc/task'
+require 'rubygems/package_task'
 
 require 'watir-rdoc'
 
@@ -38,11 +39,11 @@ end
 
 task :default => :package
 
-if defined? Rake::GemPackageTask
+if defined? Gem::PackageTask
 
   gemspec = eval(File.read('watir.gemspec'))
 
-  Rake::GemPackageTask.new(gemspec) do |p|
+  Gem::PackageTask.new(gemspec) do |p|
     p.gem_spec = gemspec
     p.need_tar = false
     p.need_zip = false
