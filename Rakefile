@@ -60,8 +60,7 @@ end
 
 task :deploy => [:clean, :gems] do
   Dir.chdir("gems") do
-    watir_gem = Dir['watir*.gem'].first
-    sh "gem install --local --no-ri #{watir_gem} --ignore-dependencies"
+    sh "gem install --local --no-ri * --ignore-dependencies"
   end
 end
 
